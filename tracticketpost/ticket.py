@@ -4,6 +4,7 @@ import ClientForm
 import sys
 
 class Ticket(object):
+    """ Represents a new trac ticket """
     _param_defaults = {
         'user' : 'user',
         'passwd' : 'password',
@@ -12,14 +13,12 @@ class Ticket(object):
     }
     _field_defaults = {
             'summary' : 'new ticket',
-            'reporter' : 'tracticketpost',
             'type' : 'task',
             'priority' : 'major',
             'milestone' : '',
             'component' : '',
             'cc' : '',
             'owner' : '',
-            'status' : 'new'
     }
 
     """ List of possible arguments to __init__(self, ...) """
@@ -47,23 +46,37 @@ class Ticket(object):
 
 
     def submit(self):
+        """ Submit the ticket.  Returns the HTTP status code. """
+
         url = 'https://%s/newticket' % self.params['uri']
         self.br.go(url)
         code = self.br.get_code()
         if code != 200:
             raise Exception, "(Code: %i)  Failed to access %s." % (code, url)
+
         form = self.br.get_form('propertyform')
         for k, v in self.fields.iteritems():
             k = 'field_%s' % k
-            if isinstance(form[k], ClientForm.TextControl):
+            control = form.find_control(k)
+            if isinstance(control, ClientForm.TextControl):
                 form[k] = v
-            elif isinstance(form[k] ClientForm.SelectControl):
+            elif isinstance(control, ClientForm.SelectControl):
+                def get_text(item):
+                    if len(item.get_labels()) == 0:
+                        return ''
+                    return item.get_labels()[0].text
+
+                possible = [ get_text(item) for item in control.get_items() ]
+
+                if v not in possible:
+                    raise ValueError, '"%s" not a valid option for %s' % (v, k)
+
                 form[k] = [v]
             else:
                 raise ValueError, "Unimplemented '%s'." % k
-
-
-        return form
+        self.br.clicked(form, form.find_control('submit'))
+        self.br.submit()
+        return self.br.get_code()
         
 
 
