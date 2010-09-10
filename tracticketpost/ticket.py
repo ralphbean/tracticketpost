@@ -21,13 +21,22 @@ class Ticket(object):
             'owner' : '',
     }
 
-    """ List of possible arguments to __init__(self, ...) """
-    defaults = dict(
-        [(k,v) for k,v in _param_defaults.iteritems()] + \
-        [(k,v) for k,v in _field_defaults.iteritems()]
-    )
-
     def __init__(self, **kw):
+        """ Initialize the ticket.
+        
+        Possible arguments (with defaults) are:
+            user        'user'
+            passwd      'password'
+            realm       'example realm'
+            uri         'trac.example.com'
+            summary     'new ticket'
+            type        'task'
+            priority    'major'
+            milestone   ''
+            component   ''
+            cc          ''
+            owner       ''
+        """
         self.fields, self.params = self._field_defaults, self._param_defaults
         possible_keys = self._field_defaults.keys()+self._param_defaults.keys()
         for k, v in kw.iteritems():
