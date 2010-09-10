@@ -18,7 +18,8 @@ setup(name='tracticketpost',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-          # -*- Extra requirements: -*-
+          'twill',
+          'BeautifulSoup',
       ],
       entry_points="""
       # -*- Entry points: -*-

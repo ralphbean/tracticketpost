@@ -45,6 +45,7 @@ class Ticket(object):
     def _get_form_token(self):
         print self.params
         self.br.go('https://%s/newticket' % self.params['baseurl'])
+        print self.br.get_code()
         soup = BeautifulSoup(self.br.get_html())
         tags = soup.findAll(name='__FORM_TOKEN')
         print tags
