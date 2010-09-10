@@ -57,6 +57,11 @@ class Ticket(object):
 
     def submit(self):
         token = self._get_form_token()
+        forms = self.br.get_all_forms()
+        print forms
+        print len(forms)
+        form = self.br.get_form('propertyform')
+        print form
         # TODO -- working here!
         print token
         
