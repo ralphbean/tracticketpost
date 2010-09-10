@@ -5,3 +5,4 @@ venv-apply
 ez_setup
 *.pyo
 testsc.py
+dist
