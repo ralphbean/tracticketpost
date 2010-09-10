@@ -1,26 +1,26 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.0'
+version = '0.1'
 
 setup(name='tracticketpost',
       version=version,
-      description="",
-      long_description="""\
-""",
-      classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+      description="Submit new tickets to trac (via HTTP post)",
+      # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+      classifiers=[
+          'Development Status :: 3 - Alpha',
+          'Framework :: Trac',
+          'Topic :: Software Development :: Libraries :: Python Modules',
+      ],
       keywords='',
-      author='',
-      author_email='',
-      url='',
-      license='',
+      author='Ralph Bean',
+      author_email='ralph.bean@gmail.com',
+      url='http://github.com/ralph.bean/tracticketpost',
+      license='GPL',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
       install_requires=[
           'twill',
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
       )
