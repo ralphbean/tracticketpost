@@ -3,3 +3,4 @@ venv-apply
 *.swp
 *.egg-info
 ez_setup
+*.pyo
