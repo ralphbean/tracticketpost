@@ -5,9 +5,10 @@ import sys
 
 class Ticket(object):
     _param_defaults = {
-        'username' : 'user',
-        'password' : 'password',
-        'baseurl' : 'trac.example.com'
+        'user' : 'user',
+        'passwd' : 'password',
+        'realm' : 'example realm',
+        'uri' : 'trac.example.com'
     }
     _field_defaults = {
             'summary' : 'new ticket',
@@ -40,17 +41,25 @@ class Ticket(object):
                 self.params[k] = v
 
         self.br = TwillBrowser()
+        self.br.creds.add_password(*[
+            self.params[k] for k in ['realm', 'uri', 'user', 'passwd']
+        ])
 
 
     def _get_form_token(self):
-        print self.params
-        self.br.go('https://%s/newticket' % self.params['baseurl'])
-        print self.br.get_code()
+        url = 'https://%s/newticket' % self.params['uri']
+        self.br.go(url)
+        code = self.br.get_code()
+        if code != 200:
+            raise Exception, "(Code: %i)  Failed to access %s." % (code, url)
         soup = BeautifulSoup(self.br.get_html())
-        tags = soup.findAll(name='__FORM_TOKEN')
-        print tags
-        print len(tags)
-        sys.exit(0)
+        return soup.findAll('input', attrs={'name':'__FORM_TOKEN'})[0]['value']
+
+    def submit(self):
+        token = self._get_form_token()
+        # TODO -- working here!
+        print token
+        
 
 
 
