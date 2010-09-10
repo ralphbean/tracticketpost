@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1'
+version = '0.2'
 
 setup(name='tracticketpost',
       version=version,
@@ -15,7 +15,7 @@ setup(name='tracticketpost',
       keywords='',
       author='Ralph Bean',
       author_email='ralph.bean@gmail.com',
-      url='http://github.com/ralph.bean/tracticketpost',
+      url='http://github.com/ralphbean/tracticketpost',
       license='GPL',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
