@@ -19,7 +19,6 @@ setup(name='tracticketpost',
       zip_safe=False,
       install_requires=[
           'twill',
-          'BeautifulSoup',
       ],
       entry_points="""
       # -*- Entry points: -*-

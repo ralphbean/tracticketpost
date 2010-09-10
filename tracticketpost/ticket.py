@@ -1,5 +1,5 @@
 from twill.browser import TwillBrowser
-from BeautifulSoup import BeautifulSoup
+import ClientForm
 
 import sys
 
@@ -46,24 +46,24 @@ class Ticket(object):
         ])
 
 
-    def _get_form_token(self):
+    def submit(self):
         url = 'https://%s/newticket' % self.params['uri']
         self.br.go(url)
         code = self.br.get_code()
         if code != 200:
             raise Exception, "(Code: %i)  Failed to access %s." % (code, url)
-        soup = BeautifulSoup(self.br.get_html())
-        return soup.findAll('input', attrs={'name':'__FORM_TOKEN'})[0]['value']
-
-    def submit(self):
-        token = self._get_form_token()
-        forms = self.br.get_all_forms()
-        print forms
-        print len(forms)
         form = self.br.get_form('propertyform')
-        print form
-        # TODO -- working here!
-        print token
+        for k, v in self.fields.iteritems():
+            k = 'field_%s' % k
+            if isinstance(form[k], ClientForm.TextControl):
+                form[k] = v
+            elif isinstance(form[k] ClientForm.SelectControl):
+                form[k] = [v]
+            else:
+                raise ValueError, "Unimplemented '%s'." % k
+
+
+        return form
         
 
 
