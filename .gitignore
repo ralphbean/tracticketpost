@@ -1,0 +1,5 @@
+venv-apply
+*.pyc
+*.swp
+apply.egg-info
+ez_setup
