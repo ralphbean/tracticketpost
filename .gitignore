@@ -4,3 +4,4 @@ venv-apply
 *.egg-info
 ez_setup
 *.pyo
+test-script.py
