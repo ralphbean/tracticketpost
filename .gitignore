@@ -6,3 +6,4 @@ ez_setup
 *.pyo
 testsc.py
 dist
+*venv*

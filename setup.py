@@ -22,5 +22,6 @@ setup(name='tracticketpost',
       zip_safe=False,
       install_requires=[
           'twill',
+          'ClientForm',
       ],
       )
