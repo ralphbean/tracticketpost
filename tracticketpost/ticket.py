@@ -32,9 +32,8 @@ class Ticket(object):
             uri         'trac.example.com'
         """
         self.params = self._param_defaults
-        possible_keys = self._param_defaults.keys()
         for k, v in kw.iteritems():
-            if not k in possible_keys:
+            if not k in self._param_defaults.keys():
                 raise ValueError, "Unexpected keyword '%s=%s'"%(str(k),str(v))
             if k in self.params:
                 self.params[k] = v
@@ -73,9 +72,8 @@ class Ticket(object):
             owner       ''
         """
         self.fields = self._field_defaults
-        possible_keys = self._field_defaults.keys()
         for k, v in kw.iteritems():
-            if not k in possible_keys:
+            if not k in self._field_defaults.keys():
                 raise ValueError, "Unexpected keyword '%s=%s'"%(str(k),str(v))
 
             if k in self.fields:
