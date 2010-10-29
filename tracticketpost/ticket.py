@@ -22,13 +22,48 @@ class Ticket(object):
     }
 
     def __init__(self, **kw):
-        """ Initialize the ticket.
-        
+        """ Set up a ticket and connection 
+
         Possible arguments (with defaults) are:
+
             user        'user'
             passwd      'password'
             realm       'example realm'
             uri         'trac.example.com'
+        """
+        self.params = self._param_defaults
+        possible_keys = self._param_defaults.keys()
+        for k, v in kw.iteritems():
+            if not k in possible_keys:
+                raise ValueError, "Unexpected keyword '%s=%s'"%(str(k),str(v))
+            if k in self.params:
+                self.params[k] = v
+            else:
+                raise ValueError, "WTF... '%s=%s'" % (str(k), str(v))
+
+        # Setup our connection
+        self.br = TwillBrowser()
+        self.br.creds.add_password(*[
+            self.params[k] for k in ['realm', 'uri', 'user', 'passwd']
+        ])
+
+        # Test our connection
+        url = 'https://%s/' % self.params['uri']
+        self.br.go(url)
+        code = self.br.get_code()
+        if code != 200:
+            raise Exception, "(Code: %i)  Failed to access %s." % (code, url)
+
+        # signifies that this ticket is in sync with what's in the trac db
+        self._dirty = False
+        # signifies that this ticket DNE in the trac db as far as we know
+        self.id = None
+
+    def update(self, **kw):
+        """ Fill in ticket values.
+
+        Possible arguments (with defaults) are:
+
             summary     'new ticket'
             type        'task'
             priority    'major'
@@ -37,25 +72,43 @@ class Ticket(object):
             cc          ''
             owner       ''
         """
-        self.fields, self.params = self._field_defaults, self._param_defaults
-        possible_keys = self._field_defaults.keys()+self._param_defaults.keys()
+        self.fields = self._field_defaults
+        possible_keys = self._field_defaults.keys()
         for k, v in kw.iteritems():
             if not k in possible_keys:
                 raise ValueError, "Unexpected keyword '%s=%s'"%(str(k),str(v))
 
             if k in self.fields:
-                self.fields[k] = v
-            elif k in self.params:
-                self.params[k] = v
+                if self.fields[k] == v:
+                    pass
+                else:
+                    self.fields[k] = v
+                    self._dirty = True
+            else:
+                raise ValueError, "WTF... '%s=%s'" % (str(k), str(v))
 
-        self.br = TwillBrowser()
-        self.br.creds.add_password(*[
-            self.params[k] for k in ['realm', 'uri', 'user', 'passwd']
-        ])
+    def retrieve(self, ticket_id):
+        """ Retrieve a ticket from trac by ID and populate my fields """
+        raise NotImplementedError, "Gotta write this method first."
 
+    def flush(self):
+        """ Flush changes to this ticket to the trac DB via http POSTs """
+        if not self._dirty:
+            raise ValueError, "No changes to ticket.  Can't flush."
+
+        if not self.id:
+            raise ValueError, "Ticket DNE in trac db yet.  Use submit."
+
+        raise NotImplementedError, "Gotta write this method first."
 
     def submit(self):
-        """ Submit the ticket.  Returns the HTTP status code. """
+        """ Submit a new ticket.  Returns the HTTP status code. """
+
+        if not self._dirty:
+            raise ValueError, "Ticket has not been modified."
+
+        if self.id:
+            raise ValueError, "Cannot submit already submitted ticket.  Use flush to push modifications to trac."
 
         url = 'https://%s/newticket' % self.params['uri']
         self.br.go(url)
@@ -78,14 +131,23 @@ class Ticket(object):
                 possible = [ get_text(item) for item in control.get_items() ]
 
                 if v not in possible:
-                    raise ValueError, '"%s" not a valid option for %s' % (v, k)
+                    raise ValueError, '"%s" not a valid option for %s (%s)' % (
+                        v, k, str(possible))
 
                 form[k] = [v]
             else:
                 raise ValueError, "Unimplemented '%s'." % k
         self.br.clicked(form, form.find_control('submit'))
         self.br.submit()
-        return self.br.get_code()
+
+        code = self.br.get_code()
+        if code == 200:
+            self._dirty = False
+
+        # TODO -- get the ticket id and save it!!!!!!!
+        print "TODO -- get the ticket id and save it!!!!"
+
+        return code
         
 
 
