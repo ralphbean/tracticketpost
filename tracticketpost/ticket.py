@@ -14,6 +14,7 @@ class Ticket(object):
     _field_defaults = {
             'summary' : 'new ticket',
             'description' : '(no description provided)',
+            'keywords' : '',
             'type' : 'task',
             'priority' : 'major',
             'milestone' : '',
@@ -65,6 +66,8 @@ class Ticket(object):
         Possible arguments (with defaults) are:
 
             summary     'new ticket'
+            description '(no description provided)'
+            keywords    ''
             type        'task'
             priority    'major'
             milestone   ''
