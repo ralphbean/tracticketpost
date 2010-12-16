@@ -13,6 +13,7 @@ class Ticket(object):
     }
     _field_defaults = {
             'summary' : 'new ticket',
+            'description' : '(no description provided)',
             'type' : 'task',
             'priority' : 'major',
             'milestone' : '',
