@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.2a3'
+version = '0.2a4'
 
 setup(name='tracticketpost',
       version=version,

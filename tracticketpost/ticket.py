@@ -1,5 +1,6 @@
 from twill.browser import TwillBrowser
 import ClientForm
+from BeautifulSoup import BeautifulSoup
 
 import sys
 
@@ -89,9 +90,36 @@ class Ticket(object):
             else:
                 raise ValueError, "WTF... '%s=%s'" % (str(k), str(v))
 
-    def retrieve(self, ticket_id):
+    def search(self, term, unique=True):
         """ Retrieve a ticket from trac by ID and populate my fields """
-        raise NotImplementedError, "Gotta write this method first."
+        url = 'https://%s/search' % self.params['uri']
+        self.br.go(url)
+        code = self.br.get_code()
+        if code != 200:
+            raise Exception, "(Code: %i)  Failed to access %s." % (code, url)
+
+        form = self.br.get_form('fullsearch')
+        for checkbox in ['wiki', 'milestone', 'changeset']:
+            form.find_control(checkbox).checked = False
+        form['q'] = term
+        self.br.clicked(form, form.find_control(type='submit'))
+        self.br.submit()
+        code = self.br.get_code()
+        if code != 200:
+            raise Exception, "(Code: %i)  Failed to search." % code
+
+        soup = BeautifulSoup(self.br.get_html())
+        results = soup.findAll(id='results')[0]
+        results = soup.findAll(id='results')[0].findAll(name='dt')
+        if len(results) < 1:
+            raise Exception, "No results for term '%s'" % term
+
+        if unique and len(results) > 1:
+            raise Exception, "More than one results for '%s' found." % term
+
+        loc = results[0].findAll(name='a')[0]['href']
+        tid = loc.split('/')[-1]
+        return int(tid)
 
     def flush(self):
         """ Flush changes to this ticket to the trac DB via http POSTs """
