@@ -1,5 +1,4 @@
 from twill.browser import TwillBrowser
-import ClientForm
 from BeautifulSoup import BeautifulSoup
 
 import sys
@@ -150,9 +149,9 @@ class Ticket(object):
         for k, v in self.fields.iteritems():
             k = 'field_%s' % k
             control = form.find_control(k)
-            if isinstance(control, ClientForm.TextControl):
+            if control.is_of_kind('text'):
                 form[k] = v
-            elif isinstance(control, ClientForm.SelectControl):
+            elif control.is_of_kind('list'):
                 def get_text(item):
                     if len(item.get_labels()) == 0:
                         return ''

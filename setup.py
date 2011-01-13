@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.2a4'
+version = '0.2a5'
 
 setup(name='tracticketpost',
       version=version,
@@ -22,6 +22,6 @@ setup(name='tracticketpost',
       zip_safe=False,
       install_requires=[
           'twill',
-          'ClientForm',
+          'BeautifulSoup',
       ],
       )
