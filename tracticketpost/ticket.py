@@ -24,7 +24,7 @@ class Ticket(object):
     }
 
     def __init__(self, **kw):
-        """ Set up a ticket and connection 
+        """ Set up a ticket and connection
 
         Possible arguments (with defaults) are:
 
@@ -148,7 +148,13 @@ class Ticket(object):
         form = self.br.get_form('propertyform')
         for k, v in self.fields.iteritems():
             k = 'field_%s' % k
-            control = form.find_control(k)
+
+            try:
+                control = form.find_control(k)
+            except Exception:
+                print "Failed on", k, v
+                continue
+
             if control.is_of_kind('text'):
                 form[k] = v
             elif control.is_of_kind('list'):
@@ -177,7 +183,3 @@ class Ticket(object):
         print "TODO -- get the ticket id and save it!!!!"
 
         return code
-        
-
-
-
